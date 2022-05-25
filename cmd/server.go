@@ -31,10 +31,10 @@ func newServerCommand() *cli.Command {
 
 // newServerAction handles the main logic of the 'server' subcommand.
 func newServerAction() cli.ActionFunc {
-	return func(ctx *cli.Context) error {
+	return func(ctxCli *cli.Context) error {
 		srv := server.New(&server.Opts{
-			Address: ctx.String("address"),
-			Port:    ctx.String("port"),
+			Address: ctxCli.String("address"),
+			Port:    ctxCli.String("port"),
 		})
 
 		if err := srv.ListenAndServe(); err != nil {
