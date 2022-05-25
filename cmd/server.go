@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/kcraley/go-grpcgreeter/server"
 	"github.com/urfave/cli/v2"
@@ -38,8 +38,7 @@ func newServerAction() cli.ActionFunc {
 		})
 
 		if err := srv.ListenAndServe(); err != nil {
-			log.Fatalf("failed running application server: %v", err)
-			return err
+			return cli.Exit(fmt.Sprintf("failed running application server: %v", err), 1)
 		}
 
 		return nil

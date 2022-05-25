@@ -47,8 +47,7 @@ func newClientAction() cli.ActionFunc {
 		addr := fmt.Sprintf("%s:%s", ctxCli.String("address"), ctxCli.String("port"))
 		connection, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			log.Fatalf("unable to create grpc dialer: %v", err)
-			return err
+			return cli.Exit(fmt.Sprintf("unable to create grpc dialer: %v", err), 1)
 		}
 		defer connection.Close()
 
@@ -59,8 +58,7 @@ func newClientAction() cli.ActionFunc {
 
 		rep, err := c.SayHello(ctx, &pb.HelloRequest{Name: ctxCli.String("name")})
 		if err != nil {
-			log.Fatalf("unable to greet: %v", err)
-			return err
+			return cli.Exit(fmt.Sprintf("unable to greet: %v", err), 1)
 		}
 		log.Printf("Greeting Message: %s", rep.GetMessage())
 		return nil
