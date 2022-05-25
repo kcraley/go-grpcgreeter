@@ -3,6 +3,7 @@ module github.com/kcraley/go-grpcgreeter
 go 1.18
 
 require (
+	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/prometheus/client_golang v1.12.2
 	github.com/urfave/cli/v2 v2.8.1

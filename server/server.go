@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
+	"time"
 
+	"github.com/gorilla/mux"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 
 	pb "github.com/kcraley/go-grpcgreeter/greeter"
@@ -19,6 +23,7 @@ const (
 // server respresents the application server.
 type server struct {
 	address    string
+	muxRouter  *mux.Router
 	grpcServer *grpc.Server
 }
 
@@ -64,7 +69,17 @@ func newServerWithDefaults() *server {
 			grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
 			grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
 		),
+		muxRouter: mux.NewRouter(),
 	}
+}
+
+// Initialize registers all necessary routes and handlers that are going
+// to be served by the application server.
+func (s *server) Initialize() {
+	pb.RegisterGreeterServer(s.grpcServer, &greeterServer{})
+	grpc_prometheus.Register(s.grpcServer)
+
+	s.muxRouter.Handle("/metrics", promhttp.Handler())
 }
 
 // ListenAndServe starts the application server and starts handling
@@ -76,8 +91,19 @@ func (s *server) ListenAndServe() error {
 	}
 	defer tcpListener.Close()
 
-	pb.RegisterGreeterServer(s.grpcServer, &greeterServer{})
+	s.Initialize()
 
+	go func() {
+		httpSrv := http.Server{
+			Addr:         "0.0.0.0:9092",
+			Handler:      s.muxRouter,
+			IdleTimeout:  10 * time.Second,
+			ReadTimeout:  15 * time.Second,
+			WriteTimeout: 20 * time.Second,
+		}
+		log.Print("serving instrumentation at /metrics")
+		httpSrv.ListenAndServe()
+	}()
 	log.Printf("application starting to listen at %s", s.address)
 	return s.grpcServer.Serve(tcpListener)
 }
