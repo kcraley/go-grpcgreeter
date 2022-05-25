@@ -101,7 +101,7 @@ func (s *server) ListenAndServe() error {
 			ReadTimeout:  15 * time.Second,
 			WriteTimeout: 20 * time.Second,
 		}
-		log.Print("serving instrumentation at /metrics")
+		log.Print("serving instrumentation at 0.0.0.0:9092/metrics")
 		httpSrv.ListenAndServe()
 	}()
 	log.Printf("application starting to listen at %s", s.address)
