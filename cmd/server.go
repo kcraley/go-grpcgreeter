@@ -15,10 +15,9 @@ func newServerCommand() *cli.Command {
 		Usage:   "starts the grpc server to handle incoming requests from clients.",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:        "port",
-				Value:       "8080",
-				Usage:       "port the application server is listening on.",
-				DefaultText: "8080",
+				Name:  "port",
+				Value: "8080",
+				Usage: "port the application server is listening on.",
 			},
 		},
 		Action: newServerAction(),
