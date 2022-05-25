@@ -25,8 +25,8 @@ type server struct {
 // Opts respresents the configuration options that can be passed
 // when creating a new application server.
 type Opts struct {
-	host string
-	port string
+	Address string
+	Port    string
 }
 
 // getAddress returns the server address string from the host and port.
@@ -34,13 +34,13 @@ func (o *Opts) getAddress() string {
 	var host string
 	var port string
 
-	if o.host != "" {
-		host = o.host
+	if o.Address != "" {
+		host = o.Address
 	} else {
 		host = defaultAddress
 	}
-	if o.port != "" {
-		port = o.port
+	if o.Port != "" {
+		port = o.Port
 	} else {
 		port = defaultPort
 	}

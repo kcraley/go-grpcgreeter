@@ -15,6 +15,11 @@ func newServerCommand() *cli.Command {
 		Usage:   "starts the grpc server to handle incoming requests from clients.",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
+				Name:  "address",
+				Value: "127.0.0.1",
+				Usage: "ip address the server is listening on.",
+			},
+			&cli.StringFlag{
 				Name:  "port",
 				Value: "8080",
 				Usage: "port the application server is listening on.",
@@ -27,7 +32,10 @@ func newServerCommand() *cli.Command {
 // newServerAction handles the main logic of the 'server' subcommand.
 func newServerAction() cli.ActionFunc {
 	return func(ctx *cli.Context) error {
-		srv := server.New(&server.Opts{})
+		srv := server.New(&server.Opts{
+			Address: ctx.String("address"),
+			Port:    ctx.String("port"),
+		})
 
 		if err := srv.ListenAndServe(); err != nil {
 			log.Fatalf("failed running application server: %v", err)
